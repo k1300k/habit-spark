@@ -1,12 +1,41 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from 'react';
+import { Header } from '@/components/Header';
+import { BottomNav } from '@/components/BottomNav';
+import { ActivityGrid } from '@/components/ActivityGrid';
+import { AddActivityModal } from '@/components/AddActivityModal';
+import { Dashboard } from '@/components/Dashboard';
+import { SettingsPanel } from '@/components/SettingsPanel';
+
+type Tab = 'home' | 'dashboard' | 'settings';
 
 const Index = () => {
+  const [activeTab, setActiveTab] = useState<Tab>('home');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <Header />
+      
+      <main className="pb-20">
+        {activeTab === 'home' && (
+          <ActivityGrid onAddClick={() => setIsAddModalOpen(true)} />
+        )}
+        
+        {activeTab === 'dashboard' && (
+          <Dashboard />
+        )}
+        
+        {activeTab === 'settings' && (
+          <SettingsPanel />
+        )}
+      </main>
+      
+      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+      
+      <AddActivityModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+      />
     </div>
   );
 };
