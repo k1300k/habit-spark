@@ -5,7 +5,7 @@ import { ActivityColor } from '@/lib/iconMapping';
 export interface Activity {
   id: string;
   name: string;
-  icon: string;
+  icon: string; // icon key
   color: ActivityColor;
   totalCount: number;
   totalDuration: number; // seconds
@@ -27,6 +27,13 @@ interface CurrentTimer {
   startTime: number | null;
 }
 
+interface ExportData {
+  version: string;
+  exportedAt: string;
+  activities: Activity[];
+  sessions: Session[];
+}
+
 interface ActivityState {
   activities: Activity[];
   sessions: Session[];
@@ -43,6 +50,11 @@ interface ActivityState {
   getTodaySessions: (activityId: string) => Session[];
   getTodayCount: (activityId: string) => number;
   getStreakDays: (activityId: string) => number;
+  
+  // Import/Export
+  exportData: () => ExportData;
+  importData: (data: ExportData) => boolean;
+  clearAllData: () => void;
 }
 
 function generateId(): string {
@@ -94,7 +106,7 @@ export const useActivityStore = create<ActivityState>()(
       },
 
       startTimer: (activityId) => {
-        const { currentTimer, activities, sessions } = get();
+        const { currentTimer } = get();
         
         // If there's already an active timer for this activity, stop it
         if (currentTimer.activityId === activityId && currentTimer.startTime) {
@@ -204,6 +216,42 @@ export const useActivityStore = create<ActivityState>()(
 
         return streak;
       },
+
+      exportData: () => {
+        const { activities, sessions } = get();
+        return {
+          version: '1.0.0',
+          exportedAt: new Date().toISOString(),
+          activities,
+          sessions,
+        };
+      },
+
+      importData: (data) => {
+        try {
+          if (!data.activities || !data.sessions) {
+            return false;
+          }
+          
+          set({
+            activities: data.activities,
+            sessions: data.sessions,
+            currentTimer: { activityId: null, startTime: null },
+          });
+          
+          return true;
+        } catch {
+          return false;
+        }
+      },
+
+      clearAllData: () => {
+        set({
+          activities: [],
+          sessions: [],
+          currentTimer: { activityId: null, startTime: null },
+        });
+      },
     }),
     {
       name: 'how-ofter-storage',
@@ -215,10 +263,10 @@ export const useActivityStore = create<ActivityState>()(
 const initializeSampleData = () => {
   const store = useActivityStore.getState();
   if (store.activities.length === 0) {
-    store.addActivity({ name: '달리기', icon: '🏃‍♂️', color: 'blue' });
-    store.addActivity({ name: '독서', icon: '📚', color: 'green' });
-    store.addActivity({ name: '물마시기', icon: '💧', color: 'blue' });
-    store.addActivity({ name: '명상', icon: '🧘‍♂️', color: 'purple' });
+    store.addActivity({ name: '달리기', icon: 'running', color: 'gray' });
+    store.addActivity({ name: '독서', icon: 'reading', color: 'gray' });
+    store.addActivity({ name: '물마시기', icon: 'water', color: 'gray' });
+    store.addActivity({ name: '명상', icon: 'meditation', color: 'gray' });
   }
 };
 

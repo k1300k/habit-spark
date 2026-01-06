@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useActivityStore } from '@/store/useActivityStore';
-import { getIconForActivity, activityColors, ActivityColor } from '@/lib/iconMapping';
+import { getIconForActivity, getIconComponent, activityColors, ActivityColor } from '@/lib/iconMapping';
 import { cn } from '@/lib/utils';
 
 interface AddActivityModalProps {
@@ -14,15 +14,15 @@ interface AddActivityModalProps {
 
 export function AddActivityModal({ isOpen, onClose }: AddActivityModalProps) {
   const [name, setName] = useState('');
-  const [selectedColor, setSelectedColor] = useState<ActivityColor>('blue');
-  const [previewIcon, setPreviewIcon] = useState('🎯');
+  const [selectedColor, setSelectedColor] = useState<ActivityColor>('gray');
+  const [previewIconKey, setPreviewIconKey] = useState('default');
   const addActivity = useActivityStore((state) => state.addActivity);
   
   useEffect(() => {
     if (name) {
-      setPreviewIcon(getIconForActivity(name));
+      setPreviewIconKey(getIconForActivity(name));
     } else {
-      setPreviewIcon('🎯');
+      setPreviewIconKey('default');
     }
   }, [name]);
   
@@ -31,12 +31,12 @@ export function AddActivityModal({ isOpen, onClose }: AddActivityModalProps) {
     
     addActivity({
       name: name.trim(),
-      icon: previewIcon,
+      icon: previewIconKey,
       color: selectedColor,
     });
     
     setName('');
-    setSelectedColor('blue');
+    setSelectedColor('gray');
     onClose();
   };
   
@@ -45,6 +45,8 @@ export function AddActivityModal({ isOpen, onClose }: AddActivityModalProps) {
       handleSubmit();
     }
   };
+  
+  const PreviewIcon = getIconComponent(previewIconKey);
   
   return (
     <AnimatePresence>
@@ -65,10 +67,10 @@ export function AddActivityModal({ isOpen, onClose }: AddActivityModalProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 bg-background rounded-t-3xl p-6 pb-8 z-50 safe-bottom"
+            className="fixed bottom-0 left-0 right-0 bg-background rounded-t-3xl p-5 pb-8 z-50 safe-bottom max-h-[85vh] overflow-y-auto"
           >
             {/* Handle */}
-            <div className="w-10 h-1 bg-muted rounded-full mx-auto mb-6" />
+            <div className="w-10 h-1 bg-muted rounded-full mx-auto mb-5" />
             
             {/* Close button */}
             <button
@@ -79,51 +81,51 @@ export function AddActivityModal({ isOpen, onClose }: AddActivityModalProps) {
             </button>
             
             {/* Title */}
-            <h2 className="text-xl font-semibold text-center mb-6">
+            <h2 className="text-lg font-semibold text-center mb-5">
               새로운 활동 추가
             </h2>
             
             {/* Icon Preview */}
-            <div className="flex justify-center mb-6">
+            <div className="flex justify-center mb-5">
               <motion.div
-                key={previewIcon}
+                key={previewIconKey}
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="w-20 h-20 bg-card rounded-2xl flex items-center justify-center text-5xl shadow-card"
+                className="w-16 h-16 bg-card rounded-2xl flex items-center justify-center shadow-card"
               >
-                {previewIcon}
+                <PreviewIcon size={32} strokeWidth={1.5} className="text-foreground" />
               </motion.div>
             </div>
             
             {/* Input */}
-            <div className="mb-6">
+            <div className="mb-5">
               <Input
                 placeholder="활동 이름을 입력하세요"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 onKeyDown={handleKeyDown}
                 maxLength={20}
-                className="text-center text-lg h-14 rounded-xl border-2 border-border focus:border-primary transition-colors"
+                className="text-center text-base h-12 rounded-xl border-2 border-border focus:border-primary transition-colors"
                 autoFocus
               />
               <p className="text-xs text-muted-foreground text-center mt-2">
-                💡 예: 독서, 운동, 물마시기
+                예: 독서, 운동, 물마시기
               </p>
             </div>
             
             {/* Color Selection */}
-            <div className="mb-8">
-              <p className="text-sm text-muted-foreground text-center mb-3">색상 선택</p>
-              <div className="flex justify-center gap-4">
+            <div className="mb-6">
+              <p className="text-xs text-muted-foreground text-center mb-3">색상 선택</p>
+              <div className="flex justify-center gap-3">
                 {activityColors.map((color) => (
                   <button
                     key={color.name}
                     onClick={() => setSelectedColor(color.name)}
                     className={cn(
-                      'w-10 h-10 rounded-full transition-all',
+                      'w-9 h-9 rounded-full transition-all',
                       selectedColor === color.name 
                         ? 'ring-2 ring-offset-2 ring-foreground scale-110' 
-                        : 'hover:scale-105'
+                        : 'active:scale-95'
                     )}
                     style={{ backgroundColor: color.value }}
                   />
@@ -135,7 +137,7 @@ export function AddActivityModal({ isOpen, onClose }: AddActivityModalProps) {
             <Button
               onClick={handleSubmit}
               disabled={!name.trim()}
-              className="w-full h-14 rounded-xl text-lg font-semibold shadow-button"
+              className="w-full h-12 rounded-xl text-base font-semibold"
             >
               추가하기
             </Button>

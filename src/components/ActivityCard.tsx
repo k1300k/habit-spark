@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useActivityStore } from '@/store/useActivityStore';
+import { getIconComponent } from '@/lib/iconMapping';
 import { cn } from '@/lib/utils';
 
 interface ActivityCardProps {
@@ -38,6 +39,8 @@ export function ActivityCard({ activityId }: ActivityCardProps) {
   
   if (!activity) return null;
   
+  const IconComponent = getIconComponent(activity.icon);
+  
   const handleTap = () => {
     // Haptic feedback if available
     if (navigator.vibrate) {
@@ -52,41 +55,44 @@ export function ActivityCard({ activityId }: ActivityCardProps) {
       whileTap={{ scale: 0.95 }}
       className={cn(
         'relative flex flex-col items-center justify-center p-4 rounded-2xl',
-        'min-h-[140px] w-full transition-all duration-300',
-        'shadow-card hover:shadow-card-hover',
+        'min-h-[120px] sm:min-h-[140px] w-full transition-all duration-300',
+        'shadow-card active:shadow-none',
         'touch-manipulation select-none',
         isActive 
           ? 'bg-card-active animate-timer-pulse' 
-          : 'bg-card hover:bg-secondary/50'
+          : 'bg-card active:bg-secondary/50'
       )}
     >
       {/* Count badge */}
       {todayCount > 0 && (
-        <div className="absolute top-2 right-2 bg-muted text-muted-foreground text-xs font-medium px-2 py-0.5 rounded-full">
-          x{todayCount}
+        <div className="absolute top-2 right-2 bg-foreground/10 text-foreground text-[10px] sm:text-xs font-medium px-1.5 sm:px-2 py-0.5 rounded-full">
+          ×{todayCount}
         </div>
       )}
       
       {/* Streak badge */}
       {streakDays >= 3 && (
-        <div className="absolute top-2 left-2 text-xs">
-          🔥 {streakDays}
+        <div className="absolute top-2 left-2 text-[10px] sm:text-xs font-medium text-orange-500">
+          🔥{streakDays}
         </div>
       )}
       
       {/* Icon */}
-      <div className="text-5xl mb-2 transition-transform">
-        {activity.icon}
+      <div className={cn(
+        'mb-2 transition-transform',
+        isActive ? 'text-primary' : 'text-foreground'
+      )}>
+        <IconComponent size={36} strokeWidth={1.5} className="sm:w-11 sm:h-11" />
       </div>
       
       {/* Name */}
-      <p className="text-sm font-medium text-foreground truncate max-w-full px-2">
+      <p className="text-xs sm:text-sm font-medium text-foreground truncate max-w-full px-1">
         {activity.name}
       </p>
       
       {/* Timer */}
       <div className={cn(
-        'mt-2 font-mono text-sm transition-all',
+        'mt-1.5 font-mono text-xs sm:text-sm transition-all',
         isActive ? 'text-primary font-semibold' : 'text-muted-foreground'
       )}>
         {isActive ? formatTime(elapsedTime) : '00:00'}
@@ -97,7 +103,7 @@ export function ActivityCard({ activityId }: ActivityCardProps) {
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-primary rounded-full"
+          className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-primary rounded-full"
         />
       )}
     </motion.button>
