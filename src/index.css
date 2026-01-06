@@ -9,51 +9,45 @@
     --background: 0 0% 100%;
     --foreground: 220 13% 13%;
 
-    --card: 210 20% 98%;
+    --card: 0 0% 97%;
     --card-foreground: 220 13% 13%;
-    --card-active: 207 90% 96%;
+    --card-active: 0 0% 94%;
 
     --popover: 0 0% 100%;
     --popover-foreground: 220 13% 13%;
 
-    --primary: 207 90% 54%;
+    --primary: 220 13% 20%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 220 13% 30%;
+    --secondary: 0 0% 94%;
+    --secondary-foreground: 220 13% 20%;
 
-    --muted: 210 15% 94%;
-    --muted-foreground: 220 10% 50%;
+    --muted: 0 0% 92%;
+    --muted-foreground: 220 8% 50%;
 
-    --accent: 207 90% 54%;
+    --accent: 220 13% 20%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 20% 90%;
-    --input: 210 20% 90%;
-    --ring: 207 90% 54%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 220 13% 20%;
 
     --radius: 1rem;
 
-    /* Custom colors */
-    --success: 152 69% 45%;
-    --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
-
-    /* Activity card colors */
-    --activity-blue: 207 90% 54%;
-    --activity-green: 152 69% 45%;
-    --activity-yellow: 45 93% 58%;
-    --activity-purple: 262 83% 58%;
-    --activity-orange: 25 95% 53%;
+    /* Activity card colors - monochrome */
+    --activity-gray: 220 13% 30%;
+    --activity-blue: 220 25% 45%;
+    --activity-green: 160 20% 40%;
+    --activity-purple: 270 20% 45%;
+    --activity-orange: 25 30% 45%;
 
     /* Shadows */
-    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
-    --shadow-card: 0 2px 8px 0 hsl(0 0% 0% / 0.08);
-    --shadow-lg: 0 10px 25px -5px hsl(0 0% 0% / 0.1);
+    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.04);
+    --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.06);
+    --shadow-lg: 0 8px 20px -4px hsl(0 0% 0% / 0.1);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -62,47 +56,47 @@
     --sidebar-accent: 240 4.8% 95.9%;
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 220 13% 30%;
   }
 
   .dark {
-    --background: 220 13% 10%;
-    --foreground: 210 20% 98%;
+    --background: 0 0% 8%;
+    --foreground: 0 0% 95%;
 
-    --card: 220 13% 14%;
-    --card-foreground: 210 20% 98%;
-    --card-active: 207 50% 20%;
+    --card: 0 0% 12%;
+    --card-foreground: 0 0% 95%;
+    --card-active: 0 0% 18%;
 
-    --popover: 220 13% 12%;
-    --popover-foreground: 210 20% 98%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 207 90% 54%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 0% 90%;
+    --primary-foreground: 0 0% 10%;
 
-    --secondary: 220 13% 18%;
-    --secondary-foreground: 210 20% 90%;
+    --secondary: 0 0% 16%;
+    --secondary-foreground: 0 0% 90%;
 
-    --muted: 220 13% 20%;
-    --muted-foreground: 210 15% 60%;
+    --muted: 0 0% 18%;
+    --muted-foreground: 0 0% 55%;
 
-    --accent: 207 90% 54%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 0 0% 90%;
+    --accent-foreground: 0 0% 10%;
 
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 20%;
-    --input: 220 13% 20%;
-    --ring: 207 90% 54%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 0 0% 80%;
 
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 0 0% 10%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 0 0% 90%;
+    --sidebar-primary-foreground: 0 0% 10%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 0 0% 18%;
+    --sidebar-ring: 0 0% 70%;
   }
 }
 
