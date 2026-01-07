@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useActivityStore, Session } from '@/store/useActivityStore';
+import { Loader2 } from 'lucide-react';
+import { useActivities, Session } from '@/contexts/ActivityContext';
 import { getIconComponent } from '@/lib/iconMapping';
 import { cn } from '@/lib/utils';
 
@@ -47,7 +48,15 @@ function isSessionInRange(session: Session, start: Date, end: Date): boolean {
 
 export function Dashboard() {
   const [period, setPeriod] = useState<Period>('today');
-  const { activities, sessions, getStreakDays } = useActivityStore();
+  const { activities, sessions, getStreakDays, loading } = useActivities();
+  
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[200px]">
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
   
   const { start, end } = getDateRange(period);
   const filteredSessions = sessions.filter((s) => isSessionInRange(s, start, end));
