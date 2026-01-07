@@ -22,9 +22,9 @@ export interface Session {
   duration: number; // seconds
 }
 
-interface CurrentTimer {
-  activityId: string | null;
-  startTime: number | null;
+interface ActiveTimer {
+  activityId: string;
+  startTime: number;
 }
 
 interface ExportData {
@@ -37,7 +37,7 @@ interface ExportData {
 interface ActivityState {
   activities: Activity[];
   sessions: Session[];
-  currentTimer: CurrentTimer;
+  activeTimers: ActiveTimer[];
   
   // Actions
   addActivity: (activity: Omit<Activity, 'id' | 'totalCount' | 'totalDuration' | 'createdAt' | 'notificationEnabled'>) => void;
@@ -45,7 +45,9 @@ interface ActivityState {
   updateActivity: (id: string, updates: Partial<Activity>) => void;
   
   startTimer: (activityId: string) => void;
-  stopTimer: () => void;
+  stopTimer: (activityId: string) => void;
+  isTimerActive: (activityId: string) => boolean;
+  getActiveTimerCount: () => number;
   
   getTodaySessions: (activityId: string) => Session[];
   getTodayCount: (activityId: string) => number;
@@ -74,7 +76,7 @@ export const useActivityStore = create<ActivityState>()(
     (set, get) => ({
       activities: [],
       sessions: [],
-      currentTimer: { activityId: null, startTime: null },
+      activeTimers: [],
 
       addActivity: (activity) => {
         const newActivity: Activity = {
@@ -106,16 +108,17 @@ export const useActivityStore = create<ActivityState>()(
       },
 
       startTimer: (activityId) => {
-        const { currentTimer } = get();
+        const { activeTimers } = get();
+        const existingTimer = activeTimers.find(t => t.activityId === activityId);
         
         // If there's already an active timer for this activity, stop it
-        if (currentTimer.activityId === activityId && currentTimer.startTime) {
-          const duration = Math.floor((Date.now() - currentTimer.startTime) / 1000);
+        if (existingTimer) {
+          const duration = Math.floor((Date.now() - existingTimer.startTime) / 1000);
           const session: Session = {
             id: generateId(),
             activityId,
             date: getToday(),
-            startTime: currentTimer.startTime,
+            startTime: existingTimer.startTime,
             endTime: Date.now(),
             duration,
           };
@@ -127,46 +130,28 @@ export const useActivityStore = create<ActivityState>()(
                 ? { ...a, totalCount: a.totalCount + 1, totalDuration: a.totalDuration + duration }
                 : a
             ),
-            currentTimer: { activityId: null, startTime: null },
+            activeTimers: state.activeTimers.filter(t => t.activityId !== activityId),
           }));
           return;
         }
         
-        // Stop any other running timer first
-        if (currentTimer.activityId && currentTimer.startTime) {
-          const duration = Math.floor((Date.now() - currentTimer.startTime) / 1000);
-          const session: Session = {
-            id: generateId(),
-            activityId: currentTimer.activityId,
-            date: getToday(),
-            startTime: currentTimer.startTime,
-            endTime: Date.now(),
-            duration,
-          };
-          
-          set((state) => ({
-            sessions: [...state.sessions, session],
-            activities: state.activities.map((a) =>
-              a.id === currentTimer.activityId
-                ? { ...a, totalCount: a.totalCount + 1, totalDuration: a.totalDuration + duration }
-                : a
-            ),
-          }));
-        }
-        
-        // Start new timer
-        set({ currentTimer: { activityId, startTime: Date.now() } });
+        // Start new timer (병행 작업 가능 - 기존 타이머 유지)
+        set((state) => ({
+          activeTimers: [...state.activeTimers, { activityId, startTime: Date.now() }],
+        }));
       },
 
-      stopTimer: () => {
-        const { currentTimer } = get();
-        if (currentTimer.activityId && currentTimer.startTime) {
-          const duration = Math.floor((Date.now() - currentTimer.startTime) / 1000);
+      stopTimer: (activityId) => {
+        const { activeTimers } = get();
+        const timer = activeTimers.find(t => t.activityId === activityId);
+        
+        if (timer) {
+          const duration = Math.floor((Date.now() - timer.startTime) / 1000);
           const session: Session = {
             id: generateId(),
-            activityId: currentTimer.activityId,
+            activityId,
             date: getToday(),
-            startTime: currentTimer.startTime,
+            startTime: timer.startTime,
             endTime: Date.now(),
             duration,
           };
@@ -174,13 +159,21 @@ export const useActivityStore = create<ActivityState>()(
           set((state) => ({
             sessions: [...state.sessions, session],
             activities: state.activities.map((a) =>
-              a.id === currentTimer.activityId
+              a.id === activityId
                 ? { ...a, totalCount: a.totalCount + 1, totalDuration: a.totalDuration + duration }
                 : a
             ),
-            currentTimer: { activityId: null, startTime: null },
+            activeTimers: state.activeTimers.filter(t => t.activityId !== activityId),
           }));
         }
+      },
+
+      isTimerActive: (activityId) => {
+        return get().activeTimers.some(t => t.activityId === activityId);
+      },
+
+      getActiveTimerCount: () => {
+        return get().activeTimers.length;
       },
 
       getTodaySessions: (activityId) => {
@@ -236,7 +229,7 @@ export const useActivityStore = create<ActivityState>()(
           set({
             activities: data.activities,
             sessions: data.sessions,
-            currentTimer: { activityId: null, startTime: null },
+            activeTimers: [],
           });
           
           return true;
@@ -249,7 +242,7 @@ export const useActivityStore = create<ActivityState>()(
         set({
           activities: [],
           sessions: [],
-          currentTimer: { activityId: null, startTime: null },
+          activeTimers: [],
         });
       },
     }),
