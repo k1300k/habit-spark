@@ -1,10 +1,9 @@
 import { useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Trash2, Download, Upload, Bell, Info, AlertTriangle } from 'lucide-react';
-import { useActivityStore } from '@/store/useActivityStore';
+import { Trash2, Download, Upload, Info, AlertTriangle, Loader2 } from 'lucide-react';
+import { useActivities } from '@/contexts/ActivityContext';
 import { getIconComponent } from '@/lib/iconMapping';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,
@@ -19,9 +18,17 @@ import {
 } from '@/components/ui/alert-dialog';
 
 export function SettingsPanel() {
-  const { activities, removeActivity, exportData, importData, clearAllData } = useActivityStore();
+  const { activities, removeActivity, exportData, importData, clearAllData, loading } = useActivities();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[200px]">
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
   
   const handleExport = () => {
     const data = exportData();
@@ -43,15 +50,15 @@ export function SettingsPanel() {
     fileInputRef.current?.click();
   };
   
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = async (event) => {
       try {
         const data = JSON.parse(event.target?.result as string);
-        const success = importData(data);
+        const success = await importData(data);
         
         if (success) {
           toast({
@@ -191,7 +198,7 @@ export function SettingsPanel() {
             <AlertDialogFooter>
               <AlertDialogCancel>취소</AlertDialogCancel>
               <AlertDialogAction
-                onClick={clearAllData}
+                onClick={() => clearAllData()}
                 className="bg-destructive hover:bg-destructive/90"
               >
                 모두 삭제

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Target } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useActivityStore } from '@/store/useActivityStore';
+import { useActivities } from '@/contexts/ActivityContext';
 import { getIconForActivity, getIconComponent, activityColors, ActivityColor } from '@/lib/iconMapping';
 import { cn } from '@/lib/utils';
 
@@ -16,7 +16,7 @@ export function AddActivityModal({ isOpen, onClose }: AddActivityModalProps) {
   const [name, setName] = useState('');
   const [selectedColor, setSelectedColor] = useState<ActivityColor>('gray');
   const [previewIconKey, setPreviewIconKey] = useState('default');
-  const addActivity = useActivityStore((state) => state.addActivity);
+  const { addActivity } = useActivities();
   
   useEffect(() => {
     if (name) {
@@ -26,10 +26,10 @@ export function AddActivityModal({ isOpen, onClose }: AddActivityModalProps) {
     }
   }, [name]);
   
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!name.trim()) return;
     
-    addActivity({
+    await addActivity({
       name: name.trim(),
       icon: previewIconKey,
       color: selectedColor,

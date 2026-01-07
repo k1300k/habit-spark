@@ -5,6 +5,7 @@ import { ActivityGrid } from '@/components/ActivityGrid';
 import { AddActivityModal } from '@/components/AddActivityModal';
 import { Dashboard } from '@/components/Dashboard';
 import { SettingsPanel } from '@/components/SettingsPanel';
+import { ActivityProvider } from '@/contexts/ActivityContext';
 
 type Tab = 'home' | 'dashboard' | 'settings';
 
@@ -13,30 +14,32 @@ const Index = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      
-      <main className="pb-20">
-        {activeTab === 'home' && (
-          <ActivityGrid onAddClick={() => setIsAddModalOpen(true)} />
-        )}
+    <ActivityProvider>
+      <div className="min-h-screen bg-background">
+        <Header />
         
-        {activeTab === 'dashboard' && (
-          <Dashboard />
-        )}
+        <main className="pb-20">
+          {activeTab === 'home' && (
+            <ActivityGrid onAddClick={() => setIsAddModalOpen(true)} />
+          )}
+          
+          {activeTab === 'dashboard' && (
+            <Dashboard />
+          )}
+          
+          {activeTab === 'settings' && (
+            <SettingsPanel />
+          )}
+        </main>
         
-        {activeTab === 'settings' && (
-          <SettingsPanel />
-        )}
-      </main>
-      
-      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
-      
-      <AddActivityModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-      />
-    </div>
+        <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+        
+        <AddActivityModal
+          isOpen={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+        />
+      </div>
+    </ActivityProvider>
   );
 };
 

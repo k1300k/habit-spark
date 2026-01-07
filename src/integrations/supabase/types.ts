@@ -14,7 +14,106 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      active_timers: {
+        Row: {
+          activity_id: string
+          created_at: string
+          id: string
+          start_time: number
+        }
+        Insert: {
+          activity_id: string
+          created_at?: string
+          id?: string
+          start_time: number
+        }
+        Update: {
+          activity_id?: string
+          created_at?: string
+          id?: string
+          start_time?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "active_timers_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activities: {
+        Row: {
+          color: string
+          count: number
+          created_at: string
+          icon: string
+          id: string
+          name: string
+          today_count: number
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          color: string
+          count?: number
+          created_at?: string
+          icon: string
+          id?: string
+          name: string
+          today_count?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          color?: string
+          count?: number
+          created_at?: string
+          icon?: string
+          id?: string
+          name?: string
+          today_count?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      sessions: {
+        Row: {
+          activity_id: string
+          created_at: string
+          duration: number
+          end_time: number
+          id: string
+          start_time: number
+        }
+        Insert: {
+          activity_id: string
+          created_at?: string
+          duration: number
+          end_time: number
+          id?: string
+          start_time: number
+        }
+        Update: {
+          activity_id?: string
+          created_at?: string
+          duration?: number
+          end_time?: number
+          id?: string
+          start_time?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sessions_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

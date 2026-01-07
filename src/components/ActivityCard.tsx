@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useActivityStore } from '@/store/useActivityStore';
+import { useActivities } from '@/contexts/ActivityContext';
 import { getIconComponent } from '@/lib/iconMapping';
 import { cn } from '@/lib/utils';
 
@@ -15,7 +15,7 @@ function formatTime(seconds: number): string {
 }
 
 export function ActivityCard({ activityId }: ActivityCardProps) {
-  const { activities, activeTimers, startTimer, getTodayCount, getStreakDays } = useActivityStore();
+  const { activities, activeTimers, startTimer, getTodayCount, getStreakDays } = useActivities();
   const activity = activities.find((a) => a.id === activityId);
   const [elapsedTime, setElapsedTime] = useState(0);
   

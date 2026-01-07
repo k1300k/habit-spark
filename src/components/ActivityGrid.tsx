@@ -1,6 +1,6 @@
-import { Plus } from 'lucide-react';
+import { Plus, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useActivityStore } from '@/store/useActivityStore';
+import { useActivities } from '@/contexts/ActivityContext';
 import { ActivityCard } from './ActivityCard';
 
 interface ActivityGridProps {
@@ -8,7 +8,15 @@ interface ActivityGridProps {
 }
 
 export function ActivityGrid({ onAddClick }: ActivityGridProps) {
-  const activities = useActivityStore((state) => state.activities);
+  const { activities, loading } = useActivities();
+  
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[200px]">
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
   
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 stagger-children">
