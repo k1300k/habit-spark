@@ -15,27 +15,28 @@ function formatTime(seconds: number): string {
 }
 
 export function ActivityCard({ activityId }: ActivityCardProps) {
-  const { activities, currentTimer, startTimer, getTodayCount, getStreakDays } = useActivityStore();
+  const { activities, activeTimers, startTimer, getTodayCount, getStreakDays } = useActivityStore();
   const activity = activities.find((a) => a.id === activityId);
   const [elapsedTime, setElapsedTime] = useState(0);
   
-  const isActive = currentTimer.activityId === activityId && currentTimer.startTime !== null;
+  const activeTimer = activeTimers.find(t => t.activityId === activityId);
+  const isActive = !!activeTimer;
   const todayCount = getTodayCount(activityId);
   const streakDays = getStreakDays(activityId);
   
   useEffect(() => {
-    if (!isActive || !currentTimer.startTime) {
+    if (!isActive || !activeTimer) {
       setElapsedTime(0);
       return;
     }
     
     const interval = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - currentTimer.startTime!) / 1000);
+      const elapsed = Math.floor((Date.now() - activeTimer.startTime) / 1000);
       setElapsedTime(elapsed);
     }, 1000);
     
     return () => clearInterval(interval);
-  }, [isActive, currentTimer.startTime]);
+  }, [isActive, activeTimer]);
   
   if (!activity) return null;
   
